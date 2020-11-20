@@ -115,4 +115,90 @@ export class ItemController {
       });
     }
   }
+
+  /**
+   * Update details of an existing product item
+   * @param {Object} request The request object
+   * @param {Object} response The response object
+   */
+  static async Edit(request, response) {
+    const {
+      body: { name, photo, description, price },
+      user: { id },
+      params,
+    } = request;
+
+    if (!name || !description || !price || !photo) {
+      return response.status(400).send({
+        message:
+          'Please provide all item details as indicated on the documentation.',
+      });
+    }
+
+    try {
+      let item = await ItemSchema.findOne({ _id: params.id });
+      if (!item) {
+        return response.status(404).send({
+          message: 'An item with the specified id not found.',
+        });
+      }
+
+      console.log({ item });
+
+      if (item.vendor != id) {
+        return response.status(200).send({
+          message: 'You can only update an item that belongs to you.',
+        });
+      }
+
+      Object.assign(item, {
+        name,
+        description,
+        price,
+        photo,
+        vendor: id,
+      });
+      item = await item.save();
+
+      return response.status(201).send({
+        item,
+        message: 'New product item created successfully.',
+      });
+    } catch (error) {
+      console.log({ error });
+      return response.status(500).send({
+        message: 'An error occurred while creating new product item.',
+      });
+    }
+  }
+
+  /**
+   * Delete an item
+   * @param {Object} request The request object
+   * @param {Object} response The response object
+   */
+  static async Delete(request, response) {
+    const {
+      user: { id },
+      params,
+    } = request;
+
+    try {
+      let item = await ItemSchema.findOne({ _id: params.id, vendor: id });
+      if (!item) {
+        return response.status(409).send({
+          message: 'An item with the specified id not found.',
+        });
+      }
+      await ItemSchema.deleteOne({ _id: params.id });
+      return response.status(201).send({
+        message: 'Product item deleted successfully.',
+      });
+    } catch (error) {
+      console.log({ error });
+      return response.status(500).send({
+        message: 'An error occurred while creating new product item.',
+      });
+    }
+  }
 }
