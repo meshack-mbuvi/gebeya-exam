@@ -1,4 +1,9 @@
+import mongoose from 'mongoose';
+
+const { ObjectId } = mongoose.Types.ObjectId;
+
 import { ItemSchema } from '../database/Models';
+import { aggregateItems } from './queryHelper';
 
 export class ItemController {
   /**
@@ -61,52 +66,18 @@ export class ItemController {
       body: { limit = 10, page = 1 },
     } = request;
     const skip = (page - 1) * limit;
-    const items = await ItemSchema.aggregate([
-      {
-        $sort: { price: -1 },
-      },
-      { $limit: skip + limit },
-      { $skip: skip },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'vendor',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-      { $unwind: '$user' },
-      {
-        $group: {
-          _id: {
-            name: '$name',
-            description: '$description',
-            price: '$price',
-            photo: '$photo',
-            id: '$_id',
-            vendor: '$user.name',
-          },
-          count: {
-            $sum: 1,
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          name: '$_id.name',
-          description: '$_id.description',
-          photo: '$_id.photo',
-          price: '$_id.price',
-          id: '$_id.id',
-          vendor: '$_id.vendor',
-        },
-      },
-    ]);
+    const items = await aggregateItems({
+      skip,
+      sortOptions: { price: -1 },
+      skip,
+      limit,
+    });
 
     return response.status(200).send({
       items,
       count: items.length,
+      page,
+      limit,
     });
   }
 
@@ -122,20 +93,26 @@ export class ItemController {
     } = request;
 
     // product_id should be a number
-    if (isNaN(item_id)) {
-      return response
-        .status(400)
-        .send({ message: 'Item id should be a valid id' });
+    if (!id) {
+      return response.status(400).send({ message: 'Missing item id.' });
     }
 
-    const item = await ItemSchema.findById(id);
+    try {
+      const item = await aggregateItems({
+        matchOptions: { _id: { $eq: ObjectId(id) } },
+      });
 
-    if (!item) {
-      return response
-        .status(404)
-        .send({ message: 'Item with given id not found' });
+      if (!item) {
+        return response
+          .status(404)
+          .send({ message: 'Item with given id not found' });
+      }
+
+      return response.status(200).send(item);
+    } catch (error) {
+      return response.status(500).send({
+        message: 'An error occurred while trying.',
+      });
     }
-
-    return response.status(200).send(item);
   }
 }

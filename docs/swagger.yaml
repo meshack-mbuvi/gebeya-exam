@@ -49,7 +49,7 @@ components:
         email:
           type: string
         password:
-            type: string
+          type: string
 paths:
   /items:
     get:
@@ -78,8 +78,11 @@ paths:
                 properties:
                   count:
                     type: number
-                    example: 40
-                  rows:
+                limit:
+                    type: number
+                page:
+                    type: number
+                rows:
                     $ref: '#components/schemas/Products'
   /users/signup:
     post:
@@ -137,7 +140,7 @@ paths:
                             password:
                                 type: string
         responses:
-            20o:
+            200:
                 content:
                     application/json:
                         schema:
