@@ -4,6 +4,7 @@ import { Router } from 'express';
 
 const router = Router();
 
+router.post('/', ItemController.Add);
 router.get('/', ItemController.All);
 router.get('/:id', ItemController.One);
 

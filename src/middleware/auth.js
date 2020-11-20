@@ -2,7 +2,10 @@ const jwt = require('jsonwebtoken');
 
 export const authentication = (req, res, next) => {
   const secretKey = process.env.SECRET_KEY;
-  const token = req.query['user-key'] || req.headers['user-key'];
+  const token =
+    req.query['token'] ||
+    req.headers['authorization'] ||
+    req.headers.authorization['token'];
 
   const { url } = req;
 
@@ -10,7 +13,6 @@ export const authentication = (req, res, next) => {
   if (url === '/users/signup' || url === '/users/login') {
     return next();
   }
-  console.log('her', { url });
 
   if (token && token.split(' ')[0] === 'Bearer') {
     jwt.verify(token.split(' ')[1], secretKey, (error, user) => {

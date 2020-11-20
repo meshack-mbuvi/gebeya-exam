@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
   title: Turing API developed by Meshack Mbuvi
-  summary: API endpoints for Ggebeya marketplace exam
+  summary: API endpoints for Gebeya marketplace exam
   description: Nodejs backend for Gebeya marketplace exam
 
 version: 0.1.9
 
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:5000/api
 
 components:
   securitySchemes:
@@ -68,11 +68,6 @@ paths:
           schema:
             type: integer
           description: Limit per page, Default: 20.
-        - in: query
-          name: description_length
-          schema:
-            type: integer
-          description: Limit of the description, Default: 200.
       responses:
         200:
           description: Get All Products
