@@ -7,10 +7,9 @@ import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
   {
-    firstName: { type: String },
+    name: { type: String },
     password: { type: String },
     email: { type: String },
-    status: { type: String },
   },
   {
     timestamps: true,

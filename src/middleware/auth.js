@@ -4,6 +4,14 @@ export const authentication = (req, res, next) => {
   const secretKey = process.env.SECRET_KEY;
   const token = req.query['user-key'] || req.headers['user-key'];
 
+  const { url } = req;
+
+  // signup and login endpoints should not be secured
+  if (url === '/users/signup' || url === '/users/login') {
+    return next();
+  }
+  console.log('her', { url });
+
   if (token && token.split(' ')[0] === 'Bearer') {
     jwt.verify(token.split(' ')[1], secretKey, (error, user) => {
       if (error) {

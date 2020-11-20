@@ -10,13 +10,13 @@ const ItemSchema = new mongoose.Schema({
     unique: true,
   },
   description: {
-    type: string,
+    type: String,
   },
   price: {
-    type: string,
+    type: String,
   },
   photo: {
-    type: string,
+    type: String,
   },
   vendor: {
     type: ObjectId,

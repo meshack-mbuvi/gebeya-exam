@@ -19,7 +19,7 @@ components:
     Item:
       type: object
       properties:
-        product_id:
+        id:
           type: number
           example: 1
         name:
@@ -36,13 +36,12 @@ components:
             type: string
     Items:
       type: array
-      items:
-        $ref: '#components/schemas/Item'
+      $ref: '#components/schemas/Item'
     
     User:
       type: object
       properties:
-        user_id:
+        id:
           type: string
           example: 1
         name:
@@ -57,7 +56,7 @@ paths:
       summary: Retrieve all items
       description: Retrieve all products from api
       tags:
-        - Products
+        - Items
       parameters:
         - in: query
           name: page
@@ -87,4 +86,79 @@ paths:
                     example: 40
                   rows:
                     $ref: '#components/schemas/Products'
-  
+  /users/signup:
+    post:
+        Summary: Add new user account
+        tags:
+            - User
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            name: 
+                                type: string
+                            email:
+                                type: string
+                            password:
+                                type: string
+        responses:
+            201:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                user:
+                                    $ref: '#components/schemas/User'
+                                token: 
+                                    type: string
+                                message:
+                                    type: string
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string
+  /users/login:
+    post:
+        Summary: Login a user to the application
+        tags:
+            - User
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            email:
+                                type: string
+                            password:
+                                type: string
+        responses:
+            20o:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                user:
+                                    $ref: '#components/schemas/User'
+                                token: 
+                                    type: string
+                                message:
+                                    type: string
+            400:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                message:
+                                    type: string

@@ -22,7 +22,6 @@ export async function createApp() {
 
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-  //   app.use('/api/auth/*');
   app.use('/api', authentication, routes);
 
   app.use('*', (req, res) => {
