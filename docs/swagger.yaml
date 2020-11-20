@@ -16,7 +16,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Product:
+    Item:
       type: object
       properties:
         product_id:
@@ -30,34 +30,31 @@ components:
           example: "product description"
         price:
           type: number
-          example: 18.95
-        discounted_price:
-          type: number
-          example: 18.95
-        thumbnail:
+        photo:
           type: string
-          example: chartres-cathedral-thumbnail.gif
-    Products:
+        vendorName:
+            type: string
+    Items:
       type: array
       items:
-        $ref: '#components/schemas/Product'
+        $ref: '#components/schemas/Item'
     
-    Customer:
+    User:
       type: object
       properties:
-        customer_id:
+        user_id:
           type: string
           example: 1
         name:
           type: string
-          example: Lannucci
         email:
           type: string
-          example: test@gmail.com
+        password:
+            type: string
 paths:
-  /products:
+  /items:
     get:
-      summary: Retrieve all products
+      summary: Retrieve all items
       description: Retrieve all products from api
       tags:
         - Products
