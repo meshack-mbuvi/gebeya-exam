@@ -17,11 +17,13 @@ To run this api locally, do the following.
 
 - Clone the repository and change directory to the repository directory.
 - Create .env file and populate it as shown by the .env-sample
-- Run `npm install` to install project dependencies
-- Start the API by executing `npm start`
+- Build docker image by executing `docker-compose build` with the necessary permissions.
+- Start the image via `docker-compose up`
 
-The API can be accessed via localhost:5000 now.
+The API can be accessed via localhost:5000/api now.
+
 Use the documentation guide for more information on how to test the endpoints.
+The API documentation can be found at `/api-docs`
 Note: You must signup first before accessing the product endpoints.
 
 ## Technologies
