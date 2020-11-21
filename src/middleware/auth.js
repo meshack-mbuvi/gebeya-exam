@@ -2,10 +2,8 @@ const jwt = require('jsonwebtoken');
 
 export const authentication = (req, res, next) => {
   const secretKey = process.env.SECRET_KEY;
-  const token =
-    req.query['token'] ||
-    req.headers['authorization'] ||
-    req.headers.authorization['token'];
+
+  const token = req.query['token'] || req.headers['authorization'];
 
   const { url } = req;
 
@@ -43,7 +41,7 @@ export const authentication = (req, res, next) => {
     return res.status(401).send({
       error: {
         status: 401,
-        message: 'Please provide your auth jwt.',
+        message: 'Missing bearer token.',
       },
     });
   }

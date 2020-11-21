@@ -99,8 +99,14 @@ export class ItemController {
       params: { id },
     } = request;
 
+    if (!params.id || params.id === '') {
+      return response
+        .status(400)
+        .send({ message: 'Id for the item is required' });
+    }
+
     // product_id should be a number
-    if (!id) {
+    if (!id || id === undefined) {
       return response.status(400).send({ message: 'Missing item id.' });
     }
 
@@ -117,6 +123,7 @@ export class ItemController {
 
       return response.status(200).send(item);
     } catch (error) {
+      console.log({ error });
       return response.status(500).send({
         message: 'An error occurred while trying.',
       });
@@ -186,6 +193,12 @@ export class ItemController {
       user: { id },
       params,
     } = request;
+
+    if (!params.id || params.id === undefined) {
+      return response
+        .status(400)
+        .send({ message: 'Id for the item is required' });
+    }
 
     try {
       let item = await ItemSchema.findOne({ _id: params.id, vendor: id });

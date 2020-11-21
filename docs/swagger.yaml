@@ -11,10 +11,11 @@ servers:
 
 components:
     securitySchemes:
-        USER-KEY:
+        BearerAuth:
             type: http
             scheme: bearer
-            bearerFormat: JWT
+            name: authorization
+            in: header
     schemas:
         Items:
             type: array
@@ -72,6 +73,8 @@ paths:
         get:
             summary: Retrieve all items
             description: Retrieve all products from api
+            security:
+                - BearerAuth: []
             tags:
                 - Item
             parameters:
@@ -80,6 +83,10 @@ paths:
                   schema:
                       type: integer
                   description: Inform the page. Starting with 1. Default 1
+                - in: path
+                  name: id
+                  schema:
+                      type: string
                 - in: query
                   name: limit
                   schema:
@@ -103,6 +110,8 @@ paths:
                                         $ref: "#components/schemas/Items"
         post:
             Summary: Add a product item
+            security:
+                - BearerAuth: []
             tags:
                 - Item
             requestBody:
@@ -141,6 +150,8 @@ paths:
                                         type: string
         put:
             Summary: Edit a product item
+            security:
+                - BearerAuth: []
             tags:
                 - Item
             requestBody:
@@ -177,6 +188,8 @@ paths:
                                         type: string
         delete:
             Summary: Delete a product item
+            security:
+                - BearerAuth: []
             tags:
                 - Item
             parameters:
@@ -295,6 +308,8 @@ paths:
     /cart:
         get:
             summary: Retrieve all items in a given shopping cart
+            security:
+                - BearerAuth: []
             tags:
                 - Cart
             parameters:
@@ -314,6 +329,8 @@ paths:
                                         $ref: "#components/schemas/Cart"
         post:
             summary: Add a product item to shopping cart
+            security:
+                - BearerAuth: []
             tags:
                 - Cart
             requestBody:
@@ -351,6 +368,8 @@ paths:
                                             type: string
         delete:
             Summary: Remove a product item to shopping cart
+            security:
+                - BearerAuth: []
             tags:
                 - Cart
             parameters:
