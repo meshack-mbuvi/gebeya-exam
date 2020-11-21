@@ -25,11 +25,8 @@ export class CartController {
           cart = uuidv4();
         }
 
-        for (let index = 0; index < items.length; index++) {
-          const element = items[index];
-
-          const { item_id, quantity = 1 } = element;
-
+        items.forEach(async ({ item_id, quantity = 1 }) => {
+          // if item exists in cart, update quantity, else create new.
           let cartItem = await CartSchema.findOne({
             cart_id: cart,
             item_id,
@@ -41,10 +38,6 @@ export class CartController {
             cartItem = new CartSchema({ item_id, quantity, cart_id: cart });
             await cartItem.save();
           }
-        }
-
-        items.forEach(async ({ item_id, quantity = 1 }) => {
-          // if item exists in cart, update quantity, else create new.
         });
 
         const cartDetails = await aggregateCart(cart);
@@ -91,6 +84,40 @@ export class CartController {
       return response.send({
         total,
         cart: cartDetails,
+      });
+    } catch (error) {
+      console.log({ error });
+      return response
+        .status(500)
+        .send({ message: 'An error occurred while retrieving cart details' });
+    }
+  }
+
+  /**
+   * This method removes an item from a shopping cart.
+   *
+   * @param {Object} request The request object
+   * @param {Object} response The response object
+   * @returns {Object} message
+   */
+  static async RemoveItemFromCart(request, response) {
+    const {
+      query: { cart_id, item_id },
+    } = request;
+
+    if (!cart_id || !item_id) {
+      return response
+        .status(400)
+        .send({ message: 'cart_id and item_id are required' });
+    }
+
+    try {
+      await CartSchema.deleteOne({
+        cart_id,
+        item_id,
+      });
+      return response.send({
+        message: 'Item remove successfully',
       });
     } catch (error) {
       console.log({ error });
