@@ -25,6 +25,13 @@ export class ItemController {
       });
     }
 
+    const itemPrice = Number.parseInt(price);
+    if (itemPrice < 0) {
+      return response.status(400).send({
+        message: 'Price must be a positive number',
+      });
+    }
+
     try {
       let item = await ItemSchema.findOne({ name });
       if (item) {
@@ -36,7 +43,7 @@ export class ItemController {
       item = new ItemSchema({
         name,
         description,
-        price,
+        price: itemPrice,
         photo,
         vendor: id,
       });
@@ -143,8 +150,6 @@ export class ItemController {
         });
       }
 
-      console.log({ item });
-
       if (item.vendor != id) {
         return response.status(200).send({
           message: 'You can only update an item that belongs to you.',
@@ -156,7 +161,6 @@ export class ItemController {
         description,
         price,
         photo,
-        vendor: id,
       });
       item = await item.save();
 

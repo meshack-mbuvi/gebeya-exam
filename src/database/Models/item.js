@@ -4,6 +4,9 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 const { ObjectId } = mongoose.Schema.Types;
 
+/**
+ * Schema for the Product items collection
+ */
 const ItemSchema = new mongoose.Schema({
   name: {
     type: String,

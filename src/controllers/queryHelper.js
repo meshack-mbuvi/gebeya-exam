@@ -1,7 +1,10 @@
-import { ItemSchema } from '../database/Models';
 import mongoose from 'mongoose';
+import { ItemSchema, CartSchema } from '../database/Models';
+import { parse as uuidParse } from 'uuid';
 
-const { ObjectId } = mongoose.Types.ObjectId;
+require('mongoose-uuid2')(mongoose);
+
+const UUID = mongoose.Types.UUID;
 
 export const aggregateItems = async ({
   matchOptions = {},
@@ -51,6 +54,49 @@ export const aggregateItems = async ({
         price: '$_id.price',
         id: '$_id.id',
         vendor: '$_id.vendor',
+      },
+    },
+  ]);
+
+export const aggregateCart = async (cartId) =>
+  await CartSchema.aggregate([
+    {
+      $match: { cart_id: { $eq: cartId.toString() } },
+    },
+    {
+      $lookup: {
+        from: 'items',
+        localField: 'item_id',
+        foreignField: '_id',
+        as: 'item',
+      },
+    },
+    { $unwind: '$item' },
+    {
+      $group: {
+        _id: {
+          itemName: '$item.name',
+          itemId: '$item._id',
+          price: '$item.price',
+          photo: '$item.photo',
+          id: '$cart_id',
+          quantity: '$quantity',
+          total: { $multiply: ['$item.price', '$quantity'] },
+        },
+        count: {
+          $sum: 2,
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        name: '$_id.itemName',
+        price: '$_id.price',
+        cart_id: '$_id.id',
+        quantity: '$_id.quantity',
+        itemId: '$_id.itemId',
+        total: '$_id.total',
       },
     },
   ]);
