@@ -1,162 +1,381 @@
 openapi: 3.0.0
 info:
-  title: Turing API developed by Meshack Mbuvi
-  summary: API endpoints for Gebeya marketplace exam
-  description: Nodejs backend for Gebeya marketplace exam
+    title: Turing API developed by Meshack Mbuvi
+    summary: API endpoints for Gebeya marketplace exam
+    description: Nodejs backend for Gebeya marketplace exam
 
 version: 0.1.9
 
 servers:
-  - url: http://localhost:5000/api
+    - url: http://localhost:5000/api
 
 components:
-  securitySchemes:
-    USER-KEY:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
-    Item:
-      type: object
-      properties:
-        id:
-          type: number
-          example: 1
-        name:
-          type: string
-          example: banana
-        description:
-          type: string
-          example: "product description"
-        price:
-          type: number
-        photo:
-          type: string
-        vendorName:
-            type: string
-    Items:
-      type: array
-      $ref: '#components/schemas/Item'
-    
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          example: 1
-        name:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
+    securitySchemes:
+        USER-KEY:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+    schemas:
+        Items:
+            type: array
+            $ref: "#components/schemas/Item"
+
+        User:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                password:
+                    type: string
+        Item:
+            type: object
+            properties:
+                id:
+                    type: string
+                name:
+                    type: string
+                photo:
+                    type: string
+                price:
+                    type: number
+                vendor:
+                    type: string
+        CartItem:
+            type: object
+            properties:
+                name:
+                    type: string
+                price:
+                    type: number
+                cart_id:
+                    type: string
+                quantity:
+                    type: number
+                item_id:
+                    type: string
+                total:
+                    type: number
+        Cart:
+            type: object
+            properties:
+                total:
+                    type: number
+                items:
+                    type: array
+                    $ref: "#components/schemas/CartItem"
 paths:
-  /items:
-    get:
-      summary: Retrieve all items
-      description: Retrieve all products from api
-      tags:
-        - Items
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: Inform the page. Starting with 1. Default: 1
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: Limit per page, Default: 20.
-      responses:
-        200:
-          description: Get All Products
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  count:
-                    type: number
-                limit:
-                    type: number
-                page:
-                    type: number
-                rows:
-                    $ref: '#components/schemas/Products'
-  /users/signup:
-    post:
-        Summary: Add new user account
-        tags:
-            - User
-        requestBody:
-            required: true
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            name: 
-                                type: string
-                            email:
-                                type: string
-                            password:
-                                type: string
-        responses:
-            201:
+    /items:
+        get:
+            summary: Retrieve all items
+            description: Retrieve all products from api
+            tags:
+                - Item
+            parameters:
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                  description: Inform the page. Starting with 1. Default 1
+                - in: query
+                  name: limit
+                  schema:
+                      type: integer
+                  description: Limit per page, Default 10.
+            responses:
+                200:
+                    description: Get All Products
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    count:
+                                        type: number
+                                    limit:
+                                        type: number
+                                    page:
+                                        type: number
+                                    items:
+                                        $ref: "#components/schemas/Items"
+        post:
+            Summary: Add a product item
+            tags:
+                - Item
+            requestBody:
+                required: true
                 content:
                     application/json:
                         schema:
                             type: object
                             properties:
-                                user:
-                                    $ref: '#components/schemas/User'
-                                token: 
+                                name:
                                     type: string
-                                message:
+                                description:
                                     type: string
-            400:
+                                price:
+                                    type: number
+                                photo:
+                                    type: string
+            responses:
+                201:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    item:
+                                        $ref: "#components/schemas/Item"
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+        put:
+            Summary: Edit a product item
+            tags:
+                - Item
+            requestBody:
+                required: true
                 content:
                     application/json:
                         schema:
                             type: object
                             properties:
-                                message:
+                                name:
                                     type: string
-  /users/login:
-    post:
-        Summary: Login a user to the application
-        tags:
-            - User
-        requestBody:
-            required: true
-            content:
-                application/json:
-                    schema:
-                        type: object
-                        properties:
-                            email:
-                                type: string
-                            password:
-                                type: string
-        responses:
-            200:
+                                description:
+                                    type: string
+                                price:
+                                    type: number
+                                photo:
+                                    type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+        delete:
+            Summary: Delete a product item
+            tags:
+                - Item
+            parameters:
+                - in: query
+                  name: item_id
+                  schema:
+                      type: string
+            requestBody:
+                required: true
                 content:
                     application/json:
                         schema:
                             type: object
                             properties:
-                                user:
-                                    $ref: '#components/schemas/User'
-                                token: 
+                                name:
                                     type: string
-                                message:
+                                description:
                                     type: string
-            400:
+                                price:
+                                    type: number
+                                photo:
+                                    type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+    /users/signup:
+        post:
+            Summary: Add new user account
+            tags:
+                - User
+            requestBody:
+                required: true
                 content:
                     application/json:
                         schema:
                             type: object
                             properties:
-                                message:
+                                name:
                                     type: string
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                201:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    user:
+                                        $ref: "#components/schemas/User"
+                                    token:
+                                        type: string
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+    /users/login:
+        post:
+            Summary: Login a user to the application
+            tags:
+                - User
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                password:
+                                    type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    user:
+                                        $ref: "#components/schemas/User"
+                                    token:
+                                        type: string
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+    /cart:
+        get:
+            summary: Retrieve all items in a given shopping cart
+            tags:
+                - Cart
+            parameters:
+                - in: query
+                  name: cart_id
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Get All product items in a given shopping cart
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    items:
+                                        $ref: "#components/schemas/Cart"
+        post:
+            summary: Add a product item to shopping cart
+            tags:
+                - Cart
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                cart_id:
+                                    type: string
+                                items:
+                                    type: array
+                                    properties:
+                                        item_id:
+                                            type: string,
+                                        quantity:
+                                            type: integer
+                responses:
+                    201:
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        items:
+                                            $ref: "#components/schemas/Cart"
+                    400:
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        message:
+                                            type: string
+        delete:
+            Summary: Remove a product item to shopping cart
+            tags:
+                - Cart
+            parameters:
+                - in: query
+                  name: cart_id
+                  schema:
+                      type: string
+                - in: query
+                  name: item_id
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string

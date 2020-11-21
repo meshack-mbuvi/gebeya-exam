@@ -95,7 +95,7 @@ export const aggregateCart = async (cartId) =>
         price: '$_id.price',
         cart_id: '$_id.id',
         quantity: '$_id.quantity',
-        itemId: '$_id.itemId',
+        item_id: '$_id.itemId',
         total: '$_id.total',
       },
     },
